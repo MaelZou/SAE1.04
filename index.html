@@ -1,10 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Rapport web de la SAE S1.04 : analyse des données de KDou, épicerie fine éco-responsable.">
+    <title>Accueil – KDou · SAE S1.04</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+<header class="site-header">
+    <a class="brand" href="index.html">KDou <span>SAE S1.04</span></a>
+    <nav aria-label="Navigation principale"><ul><li><a href="index.html" aria-current="page">Accueil</a></li><li><a href="exploration.html">Exploration</a></li><li><a href="indicateurs.html">Indicateurs</a></li><li><a href="propositions.html">Propositions</a></li></ul></nav>
+</header>
+<main>
+    <section class="hero" id="top">
+        <div>
+            <h1>SAE S1.04 – Conception et interrogation d’une base de données</h1>
+            <p class="lead">Notre équipe a étudié la base de données de KDou, qui est une entreprise d’épicerie fine, pour l'aider à améliorer sa rentabilité et son image « éco-friendly ».</p>
+        </div>
+    </section>
+    <section>
+        <h2>Contexte</h2>
+        <p>KDou achète des produits d’épicerie fine auprès de fournisseurs du monde entier et les vend à des clients situés en France. L’entreprise s’interroge sur sa rentabilité, son positionnement face à ses concurrents et souhaite renforcer son image éco-responsable.</p>
+    </section>
+    <section>
+        <h2>Missions réalisées</h2>
+        <ol class="etapes">
+            <li><strong>Étudier la base de données.</strong> Analyse des tables (Clientele, Commande, DetailCommande, Produit, Fournisseur, Pays, Categorie) et de leurs liens.</li>
+            <li><strong>Analyser les données.</strong> Requêtes SQL d’exploration, puis quatre indicateurs : origine des produits, santé, offre commerciale et partenariat client.</li>
+            <li><strong>Proposer des indicateurs.</strong> Chaque membre de l’équipe a conçu une requête utile à KDou.</li>
+        </ol>
+    </section>
 
+	<section>
+		<h2>Explorer les résultats</h2>
+		<ul class="cards">
+			<li>
+				<a class="card" href="exploration.html">
+					<h3>Exploration des données</h3>
+					<p>Requêtes de prise en main : fournisseurs, produits, catégories.</p>
+				</a>
+			</li>
+			<li>
+				<a class="card" href="indicateurs.html">
+					<h3>Indicateurs obligatoires</h3>
+					<p>Origine des produits, santé, offre commerciale, partenariat client.</p>
+				</a>
+			</li>
+			<li>
+				<a class="card" href="propositions.html">
+					<h3>Nos propositions</h3>
+					<p>Une requête personnelle par membre de l’équipe.</p>
+				</a>
+			</li>
+		</ul>
+	</section>
+    <section>
+        <h2>La base de données</h2>
+        <figure>
+            <img src="assets/images/Tables_Relations_Kdou.png" alt="Schéma des relations de la base KDou : Clientele, Commande, DetailCommande, Produit, Fournisseur, Pays, Categorie" width="704" height="264">
+            <figcaption>Schéma des relations Access de la base KDou.</figcaption>
+        </figure>
+    </section>
+    <section>
+        <h2>Équipe de projet</h2>
+        <ul>
+            <li>Maël ZOU</li>
+            <li>Achref MEDJAHED</li>
+            <li>Enzo SLIMANI</li>
+            <li>Rodrigo CUNHA DA SILVA</li>
+        </ul>
+    </section>
+</main>
+<footer class="site-footer">
+    <p>SAE S1.04 – Conception et interrogation d’une base de données (2026-2027)</p>
+    <p><a href="#top">Remonter la page ↑</a></p>
+</footer>
 </body>
 </html>

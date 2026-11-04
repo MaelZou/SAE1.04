@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Requêtes d’exploration de la base de données KDou.">
+    <title>Exploration – KDou · SAE S1.04</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="index.html">KDou <span>SAE S1.04</span></a>
+    <nav aria-label="Navigation principale"><ul><li><a href="index.html">Accueil</a></li><li><a href="exploration.html" aria-current="page">Exploration</a></li><li><a href="indicateurs.html">Indicateurs</a></li><li><a href="propositions.html">Propositions</a></li></ul></nav>
+</header>
+<main>
+    <section class="intro"><h1>Exploration des données</h1><p>Premières requêtes pour comprendre le contenu de la base et vérifier la cohérence des données.</p></section>
+    <article class="requete" id="q1b">
+        <p class="tag">Question 1.b</p>
+        <h2>Produits américains à moins de 25 €</h2>
+        <p class="enonce">Quels sont les produits de provenance des États-Unis avec un coût de moins de 25 € ? On veut leurs noms et prix, le nom du fournisseur et sa ville.</p>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span> pr.NomProd, pr.CoutAchat, f.Societe, f.Ville
+<span class="kw">FROM</span>
+  ((Produit <span class="kw">AS</span> pr
+  <span class="kw">INNER JOIN</span> Fournisseur <span class="kw">AS</span> f <span class="kw">ON</span> pr.NoFour = f.NoFour)
+  <span class="kw">INNER JOIN</span> Pays <span class="kw">AS</span> pa <span class="kw">ON</span> f.NoPays = pa.NoPays)
+<span class="kw">WHERE</span> pa.PaysFR = <span class="str">"Etats-Unis"</span>
+  <span class="kw">AND</span> pr.CoutAchat &lt; 25
+<span class="kw">ORDER BY</span> pr.NomProd;</code></pre>
+        <h3>Explications</h3>
+        <ul><li>Produit est relié à Fournisseur, lui-même relié à Pays, pour retrouver le pays d’origine.</li><li>Les conditions sur <code>PaysFR</code> et <code>CoutAchat</code> ne gardent que les produits américains de moins de 25 €.</li><li>Les résultats sont triés par nom de produit.</li></ul>
+        <h3>Résultat</h3>
+        <div class="table-wrap"><table><caption>Produits américains à moins de 25 €</caption><thead><tr><th scope="col">Produit</th><th scope="col">Coût d’achat</th><th scope="col">Fournisseur</th><th scope="col">Ville</th></tr></thead><tbody><tr><td>Boston Crab Meat</td><td>15,33 €</td><td>Atlantic Bay Fish Co.</td><td>Boston</td></tr><tr><td>Grandma's Boysenberry Spread</td><td>20,83 €</td><td>Miss Ruby's Kitchen</td><td>Ann Arbor</td></tr><tr><td>Jack's New England Clam Chowder</td><td>8,04 €</td><td>Atlantic Bay Fish Co.</td><td>Boston</td></tr><tr><td>Laughing Lumberjack Lager</td><td>11,67 €</td><td>Grizzly Hopworks Co.</td><td>Bend</td></tr><tr><td>Louisiana Fiery Hot Pepper Sauce</td><td>17,54 €</td><td>Bayou pice Traders</td><td>New Orleans</td></tr><tr><td>Louisiana Hot Spiced Okra</td><td>14,17 €</td><td>Bayou pice Traders</td><td>New Orleans</td></tr><tr><td>Sasquatch Ale</td><td>11,67 €</td><td>Grizzly Hopworks Co.</td><td>Bend</td></tr><tr><td>Steeleye Stout</td><td>15,00 €</td><td>Grizzly Hopworks Co.</td><td>Bend</td></tr></tbody></table></div>
+    </article>    <article class="requete" id="q1c">
+    <p class="tag">Question 1.c</p>
+    <h2>Viandes et poissons de plus de 50 €</h2>
+    <p class="enonce">Quels sont les produits (avec fournisseur et pays de provenance) de catégorie viandes ou poissons ayant un coût d’achat de plus de 50 € ?</p>
+    <h3>Requête SQL</h3>
+    <pre><code><span class="kw">SELECT</span> pr.NomProd, pr.CoutAchat, Societe, pa.PaysFR
+<span class="kw">FROM</span>
+  (((Produit <span class="kw">AS</span> pr
+  <span class="kw">INNER JOIN</span> Fournisseur <span class="kw">AS</span> f <span class="kw">ON</span> pr.NoFour = f.NoFour)
+  <span class="kw">INNER JOIN</span> Pays <span class="kw">AS</span> pa <span class="kw">ON</span> f.NoPays = pa.NoPays)
+  <span class="kw">INNER JOIN</span> Categorie <span class="kw">AS</span> ca <span class="kw">ON</span> pr.CodeCateg = ca.CodeCateg)
+<span class="kw">WHERE</span> (ca.NomCateg = <span class="str">"Viandes"</span>
+   <span class="kw">OR</span> ca.NomCateg = <span class="str">"Poissons et fruits de mer"</span>)
+  <span class="kw">AND</span> pr.CoutAchat &gt; 50
+<span class="kw">ORDER BY</span> pr.NomProd;</code></pre>
+    <h3>Explications</h3>
+    <ul><li>Quatre tables sont reliées par des jointures : Produit, Fournisseur, Pays et Categorie.</li><li>La condition sur <code>NomCateg</code> garde les catégories Viandes et Poissons et fruits de mer.</li><li>Le fournisseur et le pays sont affichés pour chaque produit ; tri par nom de produit.</li></ul>
+    <h3>Résultat</h3>
+    <div class="table-wrap"><table><caption>Viandes et poissons de plus de 50 €</caption><thead><tr><th scope="col">Produit</th><th scope="col">Coût d’achat</th><th scope="col">Fournisseur</th><th scope="col">Pays</th></tr></thead><tbody><tr><td>Carnarvon Tigers</td><td>52,08 €</td><td>Coral Bay Delights Ltd.</td><td>Australie</td></tr><tr><td>Dea Surströmming</td><td>120,00 €</td><td>SkandiDelikat AB</td><td>Suède</td></tr><tr><td>Mishi Kobe Niku</td><td>80,83 €</td><td>Sakura Imports</td><td>Japon</td></tr><tr><td>Pâté chinois</td><td>68,00 €</td><td>Le Panier du Coin</td><td>Canada</td></tr><tr><td>Perth Pasties</td><td>97,33 €</td><td>Boomerang Goods Pty Ltd.</td><td>Australie</td></tr><tr><td>Thüringer Rostbratwurst</td><td>103,16 €</td><td>TanteGreta Handelsgruppe</td><td>Allemagne</td></tr><tr><td>Tourtière</td><td>56,21 €</td><td>Le Panier du Coin</td><td>Canada</td></tr></tbody></table></div>
+</article>    <article class="requete" id="q1e">
+    <p class="tag">Question 1.e</p>
+    <h2>Fournisseurs de viande et de poisson</h2>
+    <p class="enonce">Quels fournisseurs proposent de la viande et du poisson ?</p>
+    <h3>Requête SQL</h3>
+    <pre><code><span class="kw">SELECT</span> <span class="kw">DISTINCT</span> f.Societe
+<span class="kw">FROM</span> Fournisseur <span class="kw">AS</span> f
+<span class="kw">WHERE</span> f.NoFour <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> pr.NoFour
+    <span class="kw">FROM</span> Produit <span class="kw">AS</span> pr
+    <span class="kw">INNER JOIN</span> Categorie <span class="kw">AS</span> ca <span class="kw">ON</span> pr.CodeCateg = ca.CodeCateg
+    <span class="kw">WHERE</span> ca.NomCateg = <span class="str">"Viandes"</span>
+  )
+  <span class="kw">AND</span> f.NoFour <span class="kw">IN</span> (
+    <span class="kw">SELECT</span> pr.NoFour
+    <span class="kw">FROM</span> Produit <span class="kw">AS</span> pr
+    <span class="kw">INNER JOIN</span> Categorie <span class="kw">AS</span> ca <span class="kw">ON</span> pr.CodeCateg = ca.CodeCateg
+    <span class="kw">WHERE</span> ca.NomCateg = <span class="str">"Poissons et fruits de mer"</span>
+  )
+<span class="kw">ORDER BY</span> f.Societe;</code></pre>
+    <h3>Explications</h3>
+    <ul><li>Une première sous-requête liste les fournisseurs ayant au moins un produit de la catégorie Viandes.</li><li>Une seconde fait de même pour Poissons et fruits de mer.</li><li><code>IN</code> associé à <code>AND</code> ne garde que les fournisseurs présents dans les deux listes ; <code>DISTINCT</code> évite les doublons.</li></ul>
+    <h3>Résultat</h3>
+    <div class="table-wrap"><table><caption>Fournisseurs de viande et de poisson</caption><thead><tr><th scope="col">Fournisseur</th></tr></thead><tbody><tr><td>Moines de Paris</td></tr><tr><td>Sakura Imports</td></tr></tbody></table></div>
+</article>    <article class="requete" id="q1h">
+    <p class="tag">Question 1.h</p>
+    <h2>Fournisseurs uniquement de desserts</h2>
+    <p class="enonce">Quels fournisseurs ne proposent que des desserts ?</p>
+    <h3>Requête SQL</h3>
+    <pre><code><span class="kw">SELECT</span> f.Societe
+<span class="kw">FROM</span> Fournisseur <span class="kw">AS</span> f
+<span class="kw">WHERE</span> f.NoFour <span class="kw">NOT IN</span> (
+    <span class="kw">SELECT</span> pr.NoFour
+    <span class="kw">FROM</span> Produit <span class="kw">AS</span> pr
+    <span class="kw">INNER JOIN</span> Categorie <span class="kw">AS</span> c <span class="kw">ON</span> pr.CodeCateg = c.CodeCateg
+    <span class="kw">WHERE</span> c.NomCateg &lt;&gt; <span class="str">"Desserts"</span>
+  )
+<span class="kw">ORDER BY</span> f.Societe;</code></pre>
+    <h3>Explications</h3>
+    <ul><li>La sous-requête récupère les fournisseurs ayant au moins un produit hors catégorie Desserts.</li><li><code>NOT IN</code> exclut ces fournisseurs : il ne reste que ceux qui ne vendent que des desserts.</li><li>Tri par ordre alphabétique de la société.</li></ul>
+    <h3>Résultat</h3>
+    <div class="table-wrap"><table><caption>Fournisseurs uniquement de desserts</caption><thead><tr><th scope="col">Fournisseur</th></tr></thead><tbody><tr><td>Baker's Treats, Ltd.</td></tr><tr><td>Holland Zoetgoed BV</td></tr><tr><td>Nordlicht Feinkost GmbH</td></tr><tr><td>Pacific United Traders Ltd.</td></tr><tr><td>Ronde du lac</td></tr><tr><td>Sabor do Sul Ltda.</td></tr><tr><td>Tulip &amp; Co. Delicacies</td></tr></tbody></table></div>
+</article>
+</main>
+<footer class="site-footer">
+    <p>SAE S1.04 – Conception et interrogation d’une base de données (2026-2027)</p>
+    <p><a href="#top">Remonter la page ↑</a></p>
+</footer>
+</body>
+</html>
