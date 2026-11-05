@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Requêtes personnelles proposées par chaque membre de l’équipe KDou.">
+    <title>Propositions – KDou · SAE S1.04</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="index.html">KDou <span>SAE S1.04</span></a>
+    <nav aria-label="Navigation principale"><ul><li><a href="index.html">Accueil</a></li><li><a href="exploration.html">Exploration</a></li><li><a href="indicateurs.html">Indicateurs</a></li><li><a href="propositions.html" aria-current="page">Propositions</a></li></ul></nav>
+</header>
+<main>
+    <section class="intro"><h1>Nos propositions</h1><p>Chaque membre de l’équipe propose une requête qu’il juge utile à KDou.</p></section>
+    <article class="requete" id="mael">
+        <p class="tag">Proposition de Maël ZOU</p>
+        <h2>Les 10 clients qui commandent le plus</h2>
+        <h3>Objectif</h3>
+        <p>Identifier les clients ayant passé le plus de commandes afin de mettre en place des actions de fidélisation : réductions, avantages ou offres personnalisées.</p>
+        <h3>Intérêt pour KDou</h3>
+        <p>Les clients fidèles représentent une part importante de l’activité. Les connaître permet de renforcer leur satisfaction et de développer des opérations de marketing ciblées.</p>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span> <span class="kw">TOP</span> 10 cl.Societe, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> NbCommandes
+<span class="kw">FROM</span> Clientele <span class="kw">AS</span> cl
+<span class="kw">INNER JOIN</span> Commande <span class="kw">AS</span> co <span class="kw">ON</span> cl.CodeCli = co.CodeCli
+<span class="kw">GROUP BY</span> cl.Societe
+<span class="kw">ORDER BY</span> <span class="kw">COUNT</span>(*) <span class="kw">DESC</span>;</code></pre>
+
+        <h3>Explications</h3>
+        <ul>
+            <li><code>INNER JOIN</code> relie chaque client à ses commandes.</li>
+            <li><code>COUNT(*)</code> compte les commandes ; <code>GROUP BY</code> les regroupe par client.</li>
+            <li><code>ORDER BY … DESC</code> trie du plus grand au plus petit nombre, puis <code>TOP 10</code> garde les dix premiers.</li>
+        </ul>
+
+        <h3>Résultat</h3>
+        <div class="table-wrap">
+            <table>
+                <caption>Top 10 des clients par nombre de commandes</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Client</th>
+                    <th scope="col">Commandes</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>RestauToqué</td>
+                    <td>79</td>
+                </tr>
+                <tr>
+                    <td>ChopsTang</td>
+                    <td>76</td>
+                </tr>
+                <tr>
+                    <td>ChefFamilla</td>
+                    <td>72</td>
+                </tr>
+                <tr>
+                    <td>Le pain bis</td>
+                    <td>56</td>
+                </tr>
+                <tr>
+                    <td>Lille table</td>
+                    <td>55</td>
+                </tr>
+                <tr>
+                    <td>Mendel table</td>
+                    <td>46</td>
+                </tr>
+                <tr>
+                    <td>Speedy plate</td>
+                    <td>43</td>
+                </tr>
+                <tr>
+                    <td>Chez Bouxou</td>
+                    <td>42</td>
+                </tr>
+                <tr>
+                    <td>Bistro gare</td>
+                    <td>41</td>
+                </tr>
+                <tr>
+                    <td>Pâtes à succès</td>
+                    <td>37</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="requete" id="achref">
+        <p class="tag">Proposition d'Achref MEDJAHED</p>
+        <h2>Mettre en avant les fournisseurs proches de soi pour des raisons ecologiques evidentes</h2>
+        <h3>Objectif</h3>
+        <p>On veut analyser l'origine de nos produits et leurs coûts d'achat pour concilier performance économique et démarche éco-responsable.</p>
+        <h3>Intérêt pour KDou</h3>
+        <p>Cela permettre à KDou pour baisser ses émissions polluantes par rapport à leurs chemins de livraisons, et en justement pouvannt optimiser toutes leurs stratégies <livraisons class=""></livraisons></p>
+        <h3>Requête SQL</h3>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT DISTINCT</span> f.societe, pa.paysfr, nomprod
+<span class="kw">FROM</span> (((fournisseur <span class="kw">AS</span> f <span class="kw">INNER JOIN</span> produit <span class="kw">AS</span> p <span class="kw">ON</span> f.nofour = p.nofour)
+<span class="kw">INNER JOIN</span> pays <span class="kw">AS</span> pa <span class="kw">ON</span> pa.nopays = f.nopays)
+<span class="kw">INNER JOIN</span> categorie <span class="kw">AS</span> c <span class="kw">ON</span> p.codecateg = c.codecateg)
+<span class="kw">WHERE</span> c.codecateg <span class="kw">IN</span> (6, 8) <span class="kw">AND</span> coutachat > 50
+<span class="kw">ORDER BY</span> f.societe;</code></pre>
+        <h3>Explications</h3>
+        <ul>
+            <li><code>INNER JOIN</code> relie la table <code>fournisseur</code> aux tables <code>produit</code>, <code>pays</code> et <code>categorie</code>.</li>
+            <li><code>WHERE c.codecateg IN (6, 8) AND coutachat > 50</code> filtre les produits appartenant aux catégories 6 ou 8 dont le coût d'achat dépasse 50 €.</li>
+            <li><code>SELECT DISTINCT</code> et <code>ORDER BY f.societe</code> affichent la liste sans doublons, triée par ordre alphabétique des fournisseurs.</li>
+        </ul>
+        <h3>Résultat</h3>
+        <div class="table-wrap">
+            <table>
+                <caption>Fournisseurs et produits à fort coût d'achat (Catégories 6 et 8)</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Société</th>
+                    <th scope="col">PaysFR</th>
+                    <th scope="col">NomProd</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Aux délices du midi</td>
+                    <td>France</td>
+                    <td>Foie gras d'oie truffé</td>
+                </tr>
+                <tr>
+                    <td>Gourmet SpA</td>
+                    <td>Italie</td>
+                    <td>Huile d'olive extra vierge BIO</td>
+                </tr>
+                <tr>
+                    <td>Nordic Flavours</td>
+                    <td>Norvège</td>
+                    <td>Saumon fumé supérieur</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    </article>
+
+    <article class="requete" id="enzo">
+        <p class="tag">Proposition d'Enzo SLIMANI</p>
+        <h2>Quel est le montant total net payé pour les produits commandés auprès des fournisseurs de chaque pays, du plus cher au moins cher ?"</h2>
+        <h3>Objectif</h3>
+        <p>Identifier les clients ayant passé le plus de commandes afin de mettre en place des actions de fidélisation : réductions, avantages ou offres personnalisées.</p>
+        <h3>Intérêt pour KDou</h3>
+        <p>Cette requête est très utile parce qu'elle donne enfin une vue d'ensemble. Il pouvait frustrant d'être limité à la zone Europe, car cela ne donnait pas d'image fidèle de l'activité globale de Kdou. Maintenant, nous pouvons comparer directement l'impact de chaque pays fournisseur, sans exception. Cela permet de savoir tout de suite quels pays rapportent le plus et d'aider Kdou à prendre les bonnes décisions pour se développer à l'international.</p>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span>
+  p.PaysFr,
+  <span class="kw">SUM</span>(d.Quantité * (1 - d.[remise (%)]) * pr.coutachat) <span class="kw">AS</span> TotalGlobal
+<span class="kw">FROM</span>
+(
+  (
+    pays <span class="kw">AS</span> p
+    <span class="kw">INNER JOIN</span> fournisseur <span class="kw">AS</span> f <span class="kw">ON</span> p.nopays = f.nopays
+  )
+  <span class="kw">INNER JOIN</span> produit <span class="kw">AS</span> pr <span class="kw">ON</span> f.nofour = pr.nofour
+)
+<span class="kw">INNER JOIN</span> detailcommande <span class="kw">AS</span> d <span class="kw">ON</span> d.[réf produit] = pr.refprod
+<span class="kw">GROUP BY</span>
+  p.PaysFr
+<span class="kw">ORDER BY</span>
+  <span class="kw">SUM</span>(d.Quantité * (1 - d.[remise (%)]) * pr.coutachat) <span class="kw">DESC</span>;</code></pre>
+        <h3>Explications</h3>
+        <ul>
+            <li><code>INNER JOIN</code> permet d'associer le pays du fournisseur au produit et aux détails de la commande correspondante.</li>
+            <li><code>SUM(d.Quantité * (1 - d.[remise (%)]) * pr.coutachat)</code> calcule le montant total global des achats pour chaque pays en appliquant les remises enregistrées.</li>
+            <li><code>GROUP BY p.PaysFr</code> regroupe les montants totaux calculés par pays.</li>
+            <li><code>ORDER BY … DESC</code> trie le total calculé du montant le plus élevé au plus bas.</li>
+        </ul>
+        <h3>Résultat</h3>
+        <div class="table-wrap">
+            <table>
+                <caption>Total global des dépenses d'achat par pays</caption>
+                <thead>
+                <tr>
+                    <th scope="col">PaysFr</th>
+                    <th scope="col">TotalGlobal</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>France</td>
+                    <td>12450.50 €</td>
+                </tr>
+                <tr>
+                    <td>Allemagne</td>
+                    <td>8920.00 €</td>
+                </tr>
+                <tr>
+                    <td>Royaume-Uni</td>
+                    <td>5430.75 €</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+        <article class="requete" id="rodrigo">
+        <p class="tag">Proposition de Rodrigo CUNHA DA SILVA</p>
+        <h2>Combien de produits le catalogue de KDou compte-t-il pour chaque pays d’origine, du plus grand nombre au plus petit ?</h2>
+        <h3>Objectif</h3>
+        <p>Compte le nombre de produits du catalogue pour chaque pays d’origine des fournisseurs, du
+        plus grand au plus petit.</p>
+        <h3>Intérêt pour KDou</h3>
+        <p>Cela permet à KDou de conna^tre parmis ses fournisseurs lequel possède le plus grand cataloge ainsi, pouvant faire la distinction des prix d'un fournisseur à l'autre pour pouvoir économiser gagner un peu plus en rentabilité.</p>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span> Y.PaysFR <span class="kw">AS</span> Pays, Y.UE <span class="kw">AS</span> Zone, <span class="kw">COUNT</span>(*) <span class="kw">AS</span> NbProduits
+<span class="kw">FROM</span> (Produit <span class="kw">AS</span> P <span class="kw">INNER JOIN</span> Fournisseur <span class="kw">AS</span> F <span class="kw">ON</span> P.NoFour = F.NoFour)
+<span class="kw">INNER JOIN</span> Pays <span class="kw">AS</span> Y <span class="kw">ON</span> F.NoPays = Y.NoPays
+<span class="kw">GROUP BY</span> Y.PaysFR, Y.UE
+<span class="kw">ORDER BY</span> <span class="kw">COUNT</span>(*) <span class="kw">DESC</span>;</code></pre>
+        <h3>Explications</h3>
+        <ul>
+            <li><code>INNER JOIN</code> associe d'abord la table <code>Produit</code> aux fournisseurs (<code>Fournisseur</code>), puis relie chaque fournisseur à son pays (<code>Pays</code>).</li>
+            <li><code>COUNT(*)</code> compte le nombre de produits ; <code>GROUP BY Y.PaysFR, Y.UE</code> regroupe les résultats par nom de pays et statut de zone UE.</li>
+            <li><code>ORDER BY COUNT(*) DESC</code> trie les résultats par ordre décroissant pour afficher en premier les pays fournissant le plus de produits.</li>
+        </ul>
+        <h3>Résultat</h3>
+        <div class="table-wrap">
+            <table>
+                <caption>Répartition des produits par pays d'origine</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Pays</th>
+                    <th scope="col">Zone</th>
+                    <th scope="col">NbProduits</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>France</td>
+                    <td>UE</td>
+                    <td>42</td>
+                </tr>
+                <tr>
+                    <td>Allemagne</td>
+                    <td>UE</td>
+                    <td>28</td>
+                </tr>
+                <tr>
+                    <td>Royaume-Uni</td>
+                    <td>Hors UE</td>
+                    <td>15</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+</main>
+<footer class="site-footer">
+    <p>SAE S1.04 – Conception et interrogation d’une base de données (2026-2027)</p>
+    <p><a href="#top">Remonter la page ↑</a></p>
+</footer>
+</body>
+</html>

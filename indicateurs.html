@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Indicateurs obligatoires de la SAE S1.04 : origine, santé, offre commerciale, partenariat.">
+    <title>Indicateurs – KDou · SAE S1.04</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header class="site-header">
+    <a class="brand" href="index.html">KDou <span>SAE S1.04</span></a>
+    <nav aria-label="Navigation principale"><ul><li><a href="index.html">Accueil</a></li><li><a href="exploration.html">Exploration</a></li><li><a href="indicateurs.html" aria-current="page">Indicateurs</a></li><li><a href="propositions.html">Propositions</a></li></ul></nav>
+</header>
+<main>
+    <section class="intro"><h1>Indicateurs obligatoires</h1><p>Quatre indicateurs pour éclairer l’origine des produits, la santé, l’offre commerciale et le partenariat client.</p></section>
+
+    <article class="requete" id="q2">
+        <p class="tag">Question 2 · Origine des produits</p>
+        <h2>Chiffre d’affaires avec les fournisseurs de l’UE</h2>
+        <p class="enonce">Quel est le chiffre d’affaires total généré à ce jour avec les fournisseurs de l’Union européenne ?</p>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span> <span class="kw">SUM</span>(pr.CoutAchat * dc.Quantité * (1 - dc.[Remise (%)])) <span class="kw">AS</span> CA
+<span class="kw">FROM</span>
+  (((Produit <span class="kw">AS</span> pr
+  <span class="kw">INNER JOIN</span> DetailCommande <span class="kw">AS</span> dc <span class="kw">ON</span> pr.RefProd = dc.[Réf produit])
+  <span class="kw">INNER JOIN</span> Fournisseur <span class="kw">AS</span> f <span class="kw">ON</span> pr.NoFour = f.NoFour)
+  <span class="kw">INNER JOIN</span> Pays <span class="kw">AS</span> pa <span class="kw">ON</span> f.NoPays = pa.NoPays)
+<span class="kw">WHERE</span> pa.UE = <span class="str">"Membre"</span>;</code></pre>
+        <h3>Explications</h3>
+        <ul><li>Les tables Produit, DetailCommande, Fournisseur et Pays sont reliées par des jointures.</li><li><code>pa.UE = "Membre"</code> garde les fournisseurs de l’Union européenne.</li><li>Le montant de chaque ligne combine coût d’achat, quantité et remise ; <code>SUM()</code> donne le total.</li></ul>
+        <h3>Résultat</h3>
+        <div class="table-wrap"><table><caption>Chiffre d’affaires – fournisseurs UE</caption><thead><tr><th scope="col">Indicateur</th><th scope="col">Valeur</th></tr></thead><tbody><tr><td>CA total</td><td>1 340 579,91 €</td></tr></tbody></table></div>
+    </article>
+
+        <article class="requete" id="q3">
+        <p class="tag">Question 3 · Santé</p>
+        <h2>Chiffre d’affaires annuel desserts et boissons</h2>
+        <p class="enonce">Quel est le chiffre d’affaires annuel pour les catégories desserts ou boissons ?</p>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span> <span class="kw">SUM</span>(dc.Quantité * pr.CoutAchat * (1 - dc.[Remise (%)])) <span class="kw">AS</span> TotalGlobal
+    <span class="kw">FROM</span>
+      (((Commande <span class="kw">AS</span> co
+      <span class="kw">INNER JOIN</span> DetailCommande <span class="kw">AS</span> dc <span class="kw">ON</span> co.[N° commande] = dc.[N° commande])
+      <span class="kw">INNER JOIN</span> Produit <span class="kw">AS</span> pr <span class="kw">ON</span> dc.[Réf produit] = pr.RefProd)
+      <span class="kw">INNER JOIN</span> Categorie <span class="kw">AS</span> ca <span class="kw">ON</span> pr.CodeCateg = ca.CodeCateg)
+    <span class="kw">WHERE</span> <span class="kw">YEAR</span>(co.DateCde) = 2021
+      <span class="kw">AND</span> ca.NomCateg <span class="kw">IN</span> (<span class="str">"Boissons"</span>, <span class="str">"Desserts"</span>);</code></pre>
+        <h3>Explications</h3>
+        <ul><li>Commande, DetailCommande, Produit et Categorie sont reliées par des jointures.</li><li><code>YEAR(co.DateCde) = 2021</code> limite le calcul aux ventes de 2021.</li><li><code>IN ("Boissons", "Desserts")</code> sélectionne les deux catégories ciblées ; <code>SUM()</code> calcule le total.</li></ul>
+        <h3>Résultat</h3>
+        <div class="table-wrap"><table><caption>Chiffre d’affaires 2021 – boissons et desserts</caption><thead><tr><th scope="col">Indicateur</th><th scope="col">Valeur</th></tr></thead><tbody><tr><td>Total 2021</td><td>672 808,971 €</td></tr></tbody></table></div>
+    </article>
+
+    <article class="requete" id="q4">
+    <p class="tag">Question 4 · Offre commerciale</p>
+    <h2>Produits carnés non commandés</h2><p class="enonce">Nombre de produits carnés non commandés actuellement.</p>
+        <h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span>
+  <span class="kw">COUNT</span>(*) <span class="kw">AS</span> NbProduitsCarnesNonCommandes
+<span class="kw">FROM</span>
+  Produit <span class="kw">AS</span> pr
+  <span class="kw">INNER JOIN</span> Categorie <span class="kw">AS</span> ca <span class="kw">ON</span> pr.CodeCateg = ca.CodeCateg
+<span class="kw">WHERE</span>
+  ca.NomCateg <span class="kw">LIKE</span> <span class="str">"Viandes"</span>
+  <span class="kw">AND</span> pr.RefProd <span class="kw">NOT IN</span> (
+    <span class="kw">SELECT</span>
+      [Réf produit]
+    <span class="kw">FROM</span>
+      DetailCommande
+  );</code></pre>
+        <h3>Explications</h3>
+        <ul>
+            <li>
+                <code>Produit</code> et <code>Categorie</code> sont reliées par une jointure <code>INNER JOIN</code> pour filtrer sur le nom de la catégorie.
+            </li>
+            <li>
+                <code>ca.NomCateg LIKE "Viandes"</code> permet de cibler uniquement les produits de la catégorie des viandes.
+            </li>
+            <li>
+                <code>NOT IN (SELECT ...)</code> exclut l'ensemble des références produits présentes dans la table <code>DetailCommande</code> afin de ne conserver que ceux n'ayant jamais été commandés.
+            </li>
+        </ul>
+
+        <h3>Résultat</h3>
+        <div class="table-wrap">
+            <table>
+                <caption>Nombre de produits carnés jamais commandés</caption>
+                <thead>
+                <tr>
+                    <th scope="col">Indicateur</th>
+                    <th scope="col">Valeur</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Produits non commandés</td>
+                    <td>2</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="requete" id="q5">
+    <p class="tag">Question 5 · Partenariat client</p>
+    <h2>Clients pilotes et clients partenaires</h2>
+    <p class="enonce">A-t-on des clients pilotes d’un réseau partenaire ayant autant de commandes que les clients partenaires ?</p>
+	<h3>Requête SQL</h3>
+        <pre><code><span class="kw">SELECT</span>
+  c1.codecli <span class="kw">AS</span> pilote,
+  c2.codecli <span class="kw">AS</span> partenaire,
+  (
+    <span class="kw">SELECT</span>
+      <span class="kw">COUNT</span>(*)
+    <span class="kw">FROM</span>
+      commande
+    <span class="kw">WHERE</span>
+      commande.codecli = c1.codecli
+  ) <span class="kw">AS</span> nb_cmd_pilote,
+  (
+    <span class="kw">SELECT</span>
+      <span class="kw">COUNT</span>(*)
+    <span class="kw">FROM</span>
+      commande
+    <span class="kw">WHERE</span>
+      commande.codecli = c2.codecli
+  ) <span class="kw">AS</span> nb_cmd_partenaire
+<span class="kw">FROM</span>
+  clientele <span class="kw">AS</span> c1
+  <span class="kw">INNER JOIN</span> clientele <span class="kw">AS</span> c2 <span class="kw">ON</span> c1.codeclipart = c2.codecli;</code></pre>
+
+        <h3>Explications</h3>
+        <ul>
+            <li>
+                Une auto-jointure (<code>INNER JOIN</code> de <code>clientele</code> sur elle-même) associe chaque client "pilote" (<code>c1</code>) à son client "partenaire" (<code>c2</code>) via la clé <code>codeclipart</code>.
+            </li>
+            <li>
+                Deux sous-requêtes corrélées comptent respectivement le nombre total de commandes effectuées par le pilote (<code>nb_cmd_pilote</code>) et par son partenaire (<code>nb_cmd_partenaire</code>).
+            </li>
+        </ul>
+
+        <h3>Résultat</h3>
+        <div class="table-wrap">
+            <table>
+                <caption>Comparaison du nombre de commandes entre clients pilotes et partenaires</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">pilote</th>
+                        <th scope="col">partenaire</th>
+                        <th scope="col">nb_cmd_pilote</th>
+                        <th scope="col">nb_cmd_partenaire</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>FAMIA</td>
+                        <td>MALEF</td>
+                        <td>72</td>
+                        <td>42</td>
+                    </tr>
+                    <tr>
+                        <td>MALEF</td>
+                        <td>MALEF</td>
+                        <td>3</td>
+                        <td>42</td>
+                    </tr>
+                    <tr>
+                        <td>COMMI</td>
+                        <td>DRACD</td>
+                        <td>16</td>
+                        <td>34</td>
+                    </tr>
+					<tr>
+                        <td>FURIB</td>
+                        <td>DRACD</td>
+                        <td>6</td>
+                        <td>34</td>
+                    </tr>
+                    <tr>
+                        <td>MAIPA</td>
+                        <td>FRANS</td>
+                        <td>0</td>
+                        <td>37</td>
+                    </tr>
+                    <tr>
+                        <td>EASTC</td>
+                        <td>GALED</td>
+                        <td>43</td>
+                        <td>32</td>
+                    </tr>
+                    <tr>
+                        <td>GOURL</td>
+                        <td>GODOS</td>
+                        <td>20</td>
+                        <td>41</td>
+                    </tr>
+                    <tr>
+                        <td>DEAGE</td>
+                        <td>NOSGK</td>
+                        <td>0</td>
+                        <td>17</td>
+                    </tr>
+                    <tr>
+                        <td>ERNSH</td>
+                        <td>NOSGK</td>
+                        <td>46</td>
+                        <td>17</td>
+                    </tr>
+                    <tr>
+                        <td>HOTLA</td>
+                        <td>NOSGK</td>
+                        <td>13</td>
+                        <td>17</td>
+                    </tr>
+                    <tr>
+                        <td>ISAEP</td>
+                        <td>NOSGK</td>
+                        <td>17</td>
+                        <td>17</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </article>
+</article>
+</main>
+<footer class="site-footer">
+    <p>SAE S1.04 – Conception et interrogation d’une base de données (2026-2027)</p>
+    <p><a href="#top">Remonter la page ↑</a></p>
+</footer>
+</body>
+</html>
