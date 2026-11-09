@@ -93,51 +93,66 @@
 
     <article class="requete" id="achref">
         <p class="tag">Proposition d'Achref MEDJAHED</p>
-        <h2>Mettre en avant les fournisseurs proches de soi pour des raisons ecologiques evidentes</h2>
+        <article class="requete" id="achref">
+        <p class="tag">Proposition d'Achref MEDJAHED</p>
+        <h2>Mettre en avant les fournisseurs proches de soi pour des raisons écologiques évidentes</h2>
         <h3>Objectif</h3>
-        <p>On veut analyser l'origine de nos produits et leurs coûts d'achat pour concilier performance économique et démarche éco-responsable.</p>
+        <p>L'objectif est d'analyser la localisation géographique (ville et pays) des fournisseurs associée à leurs catégories de produits et leurs coûts d'achat afin de repérer et privilégier les fournisseurs de proximité.</p>
         <h3>Intérêt pour KDou</h3>
-        <p>Cela permettre à KDou pour baisser ses émissions polluantes par rapport à leurs chemins de livraisons, et en justement pouvannt optimiser toutes leurs stratégies <livraisons class=""></livraisons></p>
-        <h3>Requête SQL</h3>
+        <p>Identifier et mettre en avant les fournisseurs les plus proches permet à KDou de réduire drastiquement les distances de transport. Cela diminue directement l'empreinte carbone et les émissions de CO₂ liées aux livraisons, tout en optimisant la stratégie logistique globale de l'entreprise.</p>
         <h3>Requête SQL</h3>
         <pre><code><span class="kw">SELECT DISTINCT</span> f.societe, pa.paysfr, nomprod
-<span class="kw">FROM</span> (((fournisseur <span class="kw">AS</span> f <span class="kw">INNER JOIN</span> produit <span class="kw">AS</span> p <span class="kw">ON</span> f.nofour = p.nofour)
-<span class="kw">INNER JOIN</span> pays <span class="kw">AS</span> pa <span class="kw">ON</span> pa.nopays = f.nopays)
-<span class="kw">INNER JOIN</span> categorie <span class="kw">AS</span> c <span class="kw">ON</span> p.codecateg = c.codecateg)
-<span class="kw">WHERE</span> c.codecateg <span class="kw">IN</span> (6, 8) <span class="kw">AND</span> coutachat > 50
-<span class="kw">ORDER BY</span> f.societe;</code></pre>
+<span class="kw">FROM</span> ((fournisseur <span class="kw">AS</span> f <span class="kw">INNER JOIN</span> pays <span class="kw">AS</span> p <span class="kw">ON</span> f.nopays = p.nopays)
+<span class="kw">INNER JOIN</span> produit <span class="kw">AS</span> pr <span class="kw">ON</span> pr.nofour = f.nofour)
+<span class="kw">INNER JOIN</span> categorie <span class="kw">AS</span> c <span class="kw">ON</span> pr.codecateg = c.codecateg
+<span class="kw">ORDER BY</span> f.ville, p.paysfr, c.nomcateg <span class="kw">ASC</span>;</code></pre>
         <h3>Explications</h3>
         <ul>
-            <li><code>INNER JOIN</code> relie la table <code>fournisseur</code> aux tables <code>produit</code>, <code>pays</code> et <code>categorie</code>.</li>
-            <li><code>WHERE c.codecateg IN (6, 8) AND coutachat > 50</code> filtre les produits appartenant aux catégories 6 ou 8 dont le coût d'achat dépasse 50 €.</li>
-            <li><code>SELECT DISTINCT</code> et <code>ORDER BY f.societe</code> affichent la liste sans doublons, triée par ordre alphabétique des fournisseurs.</li>
+            <li><code>INNER JOIN</code> relie la table <code>fournisseur</code> aux tables <code>pays</code>, <code>produit</code> et <code>categorie</code>.</li>
+            <li><code>SELECT ville, paysfr, paysen, coutachat, nomcateg</code> extrait la localisation précise du fournisseur, les informations sur les produits et leur catégorie.</li>
+            <li><code>ORDER BY ville, paysfr, nomcateg ASC</code> trie les résultats par ordre alphabétique des villes, des pays puis des catégories pour structurer l'analyse géographique.</li>
         </ul>
         <h3>Résultat</h3>
         <div class="table-wrap">
             <table>
-                <caption>Fournisseurs et produits à fort coût d'achat (Catégories 6 et 8)</caption>
+                <caption>Origine des produits, coûts d'achat et catégories par fournisseur</caption>
                 <thead>
                 <tr>
-                    <th scope="col">Société</th>
+                    <th scope="col">Ville</th>
                     <th scope="col">PaysFR</th>
-                    <th scope="col">NomProd</th>
+                    <th scope="col">PaysEN</th>
+                    <th scope="col">CoutAchat</th>
+                    <th scope="col">NomCateg</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>Aux délices du midi</td>
+                    <td>Ann Arbor</td>
+                    <td>Etats-Unis</td>
+                    <td>USA</td>
+                    <td>20,83 €</td>
+                    <td>Produits secs</td>
+                </tr>
+                <tr>
+                    <td>Bend</td>
+                    <td>Etats-Unis</td>
+                    <td>USA</td>
+                    <td>11,67 €</td>
+                    <td>Boissons</td>
+                </tr>
+                <tr>
+                    <td>Boston</td>
+                    <td>Etats-Unis</td>
+                    <td>USA</td>
+                    <td>15,33 €</td>
+                    <td>Poissons et fruits de mer</td>
+                </tr>
+                <tr>
+                    <td>Paris</td>
                     <td>France</td>
-                    <td>Foie gras d'oie truffé</td>
-                </tr>
-                <tr>
-                    <td>Gourmet SpA</td>
-                    <td>Italie</td>
-                    <td>Huile d'olive extra vierge BIO</td>
-                </tr>
-                <tr>
-                    <td>Nordic Flavours</td>
-                    <td>Norvège</td>
-                    <td>Saumon fumé supérieur</td>
+                    <td>France</td>
+                    <td>18,00 €</td>
+                    <td>Viandes</td>
                 </tr>
                 </tbody>
             </table>
