@@ -101,16 +101,16 @@
         <h3>Intérêt pour KDou</h3>
         <p>Identifier et mettre en avant les fournisseurs les plus proches permet à KDou de réduire drastiquement les distances de transport. Cela diminue directement l'empreinte carbone et les émissions de CO₂ liées aux livraisons, tout en optimisant la stratégie logistique globale de l'entreprise.</p>
         <h3>Requête SQL</h3>
-        <pre><code><span class="kw">SELECT DISTINCT</span> f.societe, pa.paysfr, nomprod
-<span class="kw">FROM</span> ((fournisseur <span class="kw">AS</span> f <span class="kw">INNER JOIN</span> pays <span class="kw">AS</span> p <span class="kw">ON</span> f.nopays = p.nopays)
-<span class="kw">INNER JOIN</span> produit <span class="kw">AS</span> pr <span class="kw">ON</span> pr.nofour = f.nofour)
-<span class="kw">INNER JOIN</span> categorie <span class="kw">AS</span> c <span class="kw">ON</span> pr.codecateg = c.codecateg
-<span class="kw">ORDER BY</span> f.ville, p.paysfr, c.nomcateg <span class="kw">ASC</span>;</code></pre>
+        <pre><code><span class="kw">SELECT</span> f.Ville, p.PaysFR, p.PaysEN, pr.CoutAchat, c.NomCateg
+<span class="kw">FROM</span> ((Fournisseur <span class="kw">AS</span> f <span class="kw">INNER JOIN</span> Pays <span class="kw">AS</span> p <span class="kw">ON</span> f.NoPays = p.NoPays)
+<span class="kw">INNER JOIN</span> Produit <span class="kw">AS</span> pr <span class="kw">ON</span> pr.NoFour = f.NoFour)
+<span class="kw">INNER JOIN</span> Categorie <span class="kw">AS</span> c <span class="kw">ON</span> pr.CodeCateg = c.CodeCateg
+<span class="kw">ORDER BY</span> f.Ville, p.PaysFR, c.NomCateg <span class="kw">ASC</span>;</code></pre>
         <h3>Explications</h3>
         <ul>
-            <li><code>INNER JOIN</code> relie la table <code>fournisseur</code> aux tables <code>pays</code>, <code>produit</code> et <code>categorie</code>.</li>
-            <li><code>SELECT ville, paysfr, paysen, coutachat, nomcateg</code> extrait la localisation précise du fournisseur, les informations sur les produits et leur catégorie.</li>
-            <li><code>ORDER BY ville, paysfr, nomcateg ASC</code> trie les résultats par ordre alphabétique des villes, des pays puis des catégories pour structurer l'analyse géographique.</li>
+            <li><code>INNER JOIN</code> relie la table <code>Fournisseur</code> aux tables <code>Pays</code>, <code>Produit</code> et <code>Categorie</code>.</li>
+            <li><code>SELECT f.Ville, p.PaysFR, p.PaysEN, pr.CoutAchat, c.NomCateg</code> permet d'extraire la provenance géographique exacte des fournisseurs ainsi que les caractéristiques de leurs produits.</li>
+            <li><code>ORDER BY f.Ville, p.PaysFR, c.NomCateg ASC</code> trie les résultats par ordre alphabétique des villes, des pays puis des catégories afin de cartographier facilement les partenaires locaux et régionaux.</li>
         </ul>
         <h3>Résultat</h3>
         <div class="table-wrap">
